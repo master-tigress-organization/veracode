@@ -118,6 +118,7 @@ jobs:
           filtered_json_output_file: ${{ strategy.job-index }}-filtered_results.json
           artifact_name: ${{ matrix.file }}
           debug: 1
+          workflow_app: true
     
       - name: Veracode Pipeline Results
         if: always()
@@ -168,6 +169,7 @@ jobs:
        shell: bash
        env:
         BREAK_BUILD_ON_ERROR: ${{ inputs.break_build_on_error }}
+        BREAK_BUILD_ON_POLICY: ${{ inputs.break_build_policy_findings }}
        run: |
             success_count=0
             conclusion="failure"
@@ -179,7 +181,7 @@ jobs:
                 success_count=$((success_count + 1))
                 echo '{"status": "completed", "conclusion": "success"}' > payload.txt
               elif [ "$status" = "failure" ]; then
-                if [ "$BREAK_BUILD_ON_ERROR" = "false" ]; then
+                if [ "$BREAK_BUILD_ON_ERROR" = "false" && "$BREAK_BUILD_ON_POLICY" = "false" ]; then
                   echo '{"status": "completed", "conclusion": "success"}' > payload.txt
                 else
                   echo '{"status": "completed", "conclusion": "failure"}' > payload.txt
