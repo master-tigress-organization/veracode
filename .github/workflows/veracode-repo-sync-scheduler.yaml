@@ -1,0 +1,36 @@
+name: Veracode Repository Synchronization Scheduler
+
+on:
+  workflow_dispatch:
+#   schedule:
+#     - cron: '0 0 * * 0'  # Runs at midnight every Sunday
+
+jobs:
+  sync-repo:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions: 
+      contents: write
+    env:
+      jwtToken: ${{ secrets.WORKFLOW_JWT_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Echo sync message
+        run: |
+          echo "Repository synchronization scheduled job running."
+          echo "Owner: ${{ github.repository_owner }}"
+          echo "JWT Token: [REDACTED]"
+      
+      - name: Veracode Policy Results
+        id: synchronization-results
+        if: always()
+        uses: veracode/github-actions-integration-helper@SDEVX-8278
+        with:
+          action: 'syncRepositories'
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: 'example-app-name'
+          owner: ${{ github.repository_owner }}
+          jwtToken: ${{ secrets.WORKFLOW_JWT_TOKEN }}
