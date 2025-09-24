@@ -4,7 +4,7 @@ run-name: Software Composition Analysis - ${{ github.event.client_payload.reposi
 
 concurrency:
   group: ${{ github.event.client_payload.event_type }}-${{ github.event.client_payload.repository.name }}-${{ github.event.client_payload.repository.branch }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   repository_dispatch:
@@ -85,6 +85,6 @@ jobs:
         uses: veracode/veracode-sca@v2.1.12
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          create-issues: true
-          recursive: true
-          allow-dirty: true
+          create-issues: false
+          recursive: false
+          allow-dirty: false
